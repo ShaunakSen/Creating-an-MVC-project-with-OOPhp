@@ -131,4 +131,103 @@ else{
 Static should be used for stuff which are constant
 
 
+Abstract Class:
+
+Abstract Class is a base class. u cant instantiate them. it is used to have other classes extend from
+if u have an abstract method inside a class then that class has to be abstract itself
+
+abstract class Animal{
+    public $name;
+    public $color;
+    public function describe(){
+        return $this->name . " is of color: " . $this->color;
+    }
+    abstract public function makeSound();
+
+}
+
+class Duck extends Animal{
+    public function describe(){
+        return parent::describe();
+    }
+    public function makeSound(){
+        return 'Quack!';
+    }
+}
+
+class Dog extends Animal{
+    public function describe(){
+        return parent::describe();
+    }
+    public function makeSound(){
+        return 'Woof!';
+    }
+}
+
+$duck = new Duck;
+$duck->name="little mini";
+echo '<br/>';
+$duck->color='white';
+echo $duck->describe();
+echo '<br/>';
+echo $duck->makeSound();
+echo '<br/>';
+
+Note the parent keyword
+
+Autoloading classes
+Suppose we have 2 files start3_foo.php and start3_bar.php
+Now we have start3_index.php
+
+In start3_foo.php
+class Foo{
+    public function sayHello(){
+        echo 'Hello Mini..';
+    }
+}
+In start3_bar.php
+class Bar{
+}
+
+In start3_index.php
+
+include 'start3_foo.php';
+include 'start3_bar.php';
+
+$foo = new Foo;
+$bar = new Bar;
+$foo->sayHello();
+
+This is OK for 2 or 3 classes.When we want to include 15 20 classes we dont want so many include statements
+Here Autoload comes in
+
+spl_autoload_register(function($class_name){
+  include $class_name . '.php';
+});
+
+Please note it wont work here.. this function tries to include Foo.php and Bar.php bcoz these are
+the class names. So we have to change them
+
+final preceding a function means that function cant be overriden by inheritance
+Similarly final class_name => this class cant be inherited
+
+eg:
+in Bar.php
+
+class Bar extends Foo{
+    public function sayHello(){
+        echo '<br/>Hi... Mini.. From Bar';
+    }
+}
+
+sayHello method of Foo will get overriden.
+But if
+class Foo{
+    final public function sayHello(){
+        echo 'Hello Mini..';
+    }
+}
+
+As the method is final it cant be overriden
+
 

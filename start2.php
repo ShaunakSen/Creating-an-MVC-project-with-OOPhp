@@ -45,4 +45,56 @@ else{
     echo 'Password  is invalid';
 }
 
+echo '<br/>';
+
+abstract class Animal{
+    public $name;
+    public $color;
+    public function describe(){
+        return $this->name . " is of color: " . $this->color;
+    }
+    abstract public function makeSound();
+
+}
+
+class Duck extends Animal{
+    public function describe(){
+        return parent::describe();
+    }
+    public function makeSound(){
+        return 'Quack!';
+    }
+}
+
+class Dog extends Animal{
+    public function describe(){
+        return parent::describe();
+    }
+    public function makeSound(){
+        return 'Woof!';
+    }
+}
+
+$duck = new Duck;
+$duck->name="little mini";
+echo '<br/>';
+$duck->color='white';
+echo $duck->describe();
+echo '<br/>';
+echo $duck->makeSound();
+echo '<br/>';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ?>
