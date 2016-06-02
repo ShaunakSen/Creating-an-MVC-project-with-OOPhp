@@ -293,6 +293,7 @@ $database = new Database;
 
 $database->query('SELECT * FROM posts WHERE id = :id');
 $database->bind(':id', 1);
+$database->bind(':id', 2);
 $rows = $database->resultset();
 ?>
 <h2>Posts</h2>
@@ -315,6 +316,38 @@ $rows = $database->resultset();
 if we wanted to select all
 $database->query('SELECT * FROM posts');
 no need of bind method here
+
+In statement: $database->query('SELECT * FROM posts');
+query compiles
+
+Then we can use $rows = $database->resultset(); many times without compiling it again and again
+
+
+To sanitize strings:
+
+$post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+if (isset($_POST['submit'])) {
+    $title = $post['title'];
+    $body = $post['body'];
+}
+
+INSERT INTO Db:
+
+if (isset($_POST['submit'])) {
+    $title = $post['title'];
+    $body = $post['body'];
+    $database->query('INSERT INTO posts(title,body) VALUES (:title, :body)');
+    $database->bind(':title', $title);
+    $database->bind(':body', $body);
+    $database->execute();
+    if ($database->lastInserId()) {
+        echo '<div class="alert  alert-success" role="alert">Ok.. Inserted</div>';
+    }
+}
+
+Similar for UPDATE and DELETE
+
 
 
 
