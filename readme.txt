@@ -230,4 +230,91 @@ class Foo{
 
 As the method is final it cant be overriden
 
+DATABASES
+
+We are going to build a class which will connect and interact with database
+
+We will be using PDO
+
+Create folder classes
+classes
+->Database.php
+
+In Database.php:
+
+class Database
+{
+    private $host = '127.0.0.1';
+    private $user = 'root';
+    private $password = 'littlemini';
+    private $dbname = 'myblog';
+
+    private $dbh; //database handler
+    private $error; //error
+    private $stmt; // statement
+
+    public function __construct()
+    {
+        // set DSN
+        $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname;
+
+        //set options
+        $options = array(
+            PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        );
+        //create new pdo
+
+        try {
+            $this->dbh = new PDO($dsn, $this->user, $this->password);
+            echo 'it works';
+        } catch (PDOException $e) {
+            $this->error = $e->getMessage();
+        }
+    }
+}
+
+In start5.php
+
+require 'classes/Database.php';
+$database = new Database;
+
+Now that we have set up our database conn its time to write some queries
+
+Just under constructor
+
+We create functions.. see Database.php
+
+
+Now to access the database in start5.php
+
+require 'classes/Database.php';
+$database = new Database;
+
+$database->query('SELECT * FROM posts WHERE id = :id');
+$database->bind(':id', 1);
+$rows = $database->resultset();
+?>
+<h2>Posts</h2>
+
+<div>
+    <?php foreach ($rows as $row): ?>
+        <div>
+            <h3>
+                <?php echo $row['title']; ?>
+            </h3>
+
+            <p>
+                <?php echo $row['body']; ?>
+            </p>
+        </div>
+
+    <?php endforeach; ?>
+
+
+if we wanted to select all
+$database->query('SELECT * FROM posts');
+no need of bind method here
+
+
 
