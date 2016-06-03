@@ -426,7 +426,7 @@ public function createController()
             //Check Extend
             if (in_array("Controller", $parents)) {
                 if (method_exists($this->controller, $this->action)) {
-                    return new $this->controller($this->action, $this->request);
+                    return new $this->controller($this->action, $this->request); - A
                 } else {
                     //Method does not exist
                     echo '<h1>Method Does Not Exist</h1>';
@@ -441,4 +441,97 @@ public function createController()
             return;
         }
     }
+
+Let us first write all the code.. then we will understand
+
+
+classes->Controllers.php
+
+<?php
+
+// this is gonna be abstract class. we dont need to initiate it. we are gonna have other controllers extend from it
+
+abstract class Controller
+{
+    // 2 properties..and they will be protected so that other extending classes can access them
+
+    protected $request;
+    protected $action;
+
+    public function __construct($action, $request)
+    {
+        $this->action = $action;
+        $this->request = $request;
+    }
+    public function extecuteAction(){
+        return $this->{$this->action}();
+    }
+
+    protected function returnView($viewModel, $fullView){
+        $view = 'views/'.get_class($this).'/'.$this->action.'.php';
+        if($fullView){
+            require('views/main.php');
+        }
+        else{
+            require($view);
+        }
+    }
+}
+
+?>
+
+In index:
+if($controller){
+    $controller->extecuteAction();
+}
+
+Create controller in controllers->Home.php
+class Home extends Controller
+{
+    protected function index()
+    {
+        echo 'Home/index';
+    }
+}
+
+Ok so if all goes well, we kno we come to line A in bootstrap.php
+Say url : http://localhost/series/MVC/project/
+
+So return new home(index, request..ie GET super global) - B
+
+Also in index.php we have require('controllers/Home.php');
+So we do have access to this class
+
+
+In index we have:
+if($controller){
+    $controller->extecuteAction();
+}
+
+$controller is nothing but an object of class Home as we saw in B
+
+Now this class extends from abstract class Controller
+
+In abstract class Controller, we have
+
+public function __construct($action, $request)
+    {
+        $this->action = $action;
+        $this->request = $request;
+    }
+
+Also in bootstrap.php in line A we are doing
+return new Home(index, $_GET);
+Since Home extends Controller this constructor is called probably
+So in Controller class
+$this->action = index;
+$this->request = $_GET;
+
+Now in Controller class we have
+public function extecuteAction(){
+        return $this->{$this->action}();
+    }
+basically it does return $this->index()
+
+This index function is defined in Home Class
 
