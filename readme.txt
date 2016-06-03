@@ -349,5 +349,96 @@ if (isset($_POST['submit'])) {
 Similar for UPDATE and DELETE
 
 
+Starting with our PROJECT
 
+Create MVC folder structure
+in classes->bootstrap.php
+This takes in our request and performs actions
+eg: say we have users controller and a method in that called register,
+base_url/users/register
+This should call register method inside users class
+For this we have to create our own .htaccess file
+
+Options +FollowSymLinks
+RewriteEngine on
+RewriteRule ^([a-zA-Z]*)/?([a-zA-Z]*)?/?([a-zA-Z0-9]*)?/?$ index.php?controller=$1&action=$2&id=$3 [NC,L]
+
+
+What this file does is:
+Suppose we have a url as: http://localhost/series/MVC/project/User/register
+It will define User to be the controller and register to be the action
+
+In bootstrap.php
+
+class Bootstrap{
+    private $controller;
+    private $action;
+    private $request;
+
+    public function __construct($request){
+        $this->request=$request;
+        if($this->request['controller']==""){
+            //this is root..url is like: http://localhost/series/MVC/project/
+            $this->controller="home";
+        }
+        else{
+            $this->controller=$this->request['controller'];
+        }
+
+        if($this->request['action']==""){
+            $this->action="index";
+        }
+        else{
+            $this->action=$this->request['action'];
+        }
+
+        echo $this->controller;
+        echo $this->action;
+    }
+}
+
+For eg if we have http://localhost/series/MVC/project/User/register
+$this->controller = User
+echo $this->action = register
+
+if url: http://localhost/series/MVC/project/
+$this->controller = home
+echo $this->action = index
+
+
+In index.php
+
+//Include Config
+require('config.php');
+require('classes/bootstrap.php');
+$bootstrap = new Bootstrap($_GET);
+$controller = $bootstrap->createController();
+
+
+We create method createController in bootstrap.php
+
+public function createController()
+    {
+        //Check Class
+
+        if (class_exists($this->controller)) {
+            $parents = class_parents($this->controller);
+            //Check Extend
+            if (in_array("Controller", $parents)) {
+                if (method_exists($this->controller, $this->action)) {
+                    return new $this->controller($this->action, $this->request);
+                } else {
+                    //Method does not exist
+                    echo '<h1>Method Does Not Exist</h1>';
+                    return;
+                }
+            } else {
+                echo '<h1>Base Controller Does Not Exist</h1>';
+                return;
+            }
+        } else {
+            echo '<h1>Controller Class Does Not Exist</h1>';
+            return;
+        }
+    }
 
