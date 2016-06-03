@@ -19,6 +19,7 @@ abstract class Controller
     }
 
     protected function returnView($viewModel, $fullView){
+        $viewmodel = $viewModel;
         $view = 'views/'.get_class($this).'/'.$this->action.'.php';
         if($fullView){
             require('views/main.php');

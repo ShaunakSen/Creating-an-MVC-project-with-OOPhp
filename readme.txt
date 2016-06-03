@@ -616,3 +616,86 @@ So when Shares controller calls index function of Share model the data is printe
 But we are printing them i the model itself which is not good
 So we simply return the data so that the controller can call the view with the data
 instead of print_r($rows).. return $rows
+
+Note one thing: In index we generally display data. So in index function of Share Model we
+are doing select * from shares
+
+Let us create main.php
+views->main.php
+
+Let us set up other views
+views
+->home
+    ->index.php
+->shares
+    ->add.php
+    ->index.php
+->users
+    ->login.php
+    ->register.php
+
+Now in main.php:
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Share Board</title>
+</head>
+<body>
+<?php
+require($view);
+?>
+</body>
+</html>
+
+In view share index.php
+THIS IS SHARES/INDEX
+
+In view home index.php
+THIS IS Home/INDEX
+
+
+when we go to http://localhost/series/MVC/project/shares what happens?
+
+control goes to function index() of Shares controller
+This does:
+
+$viewmodel = new ShareModel;
+$this->returnView($viewmodel->index(),true);
+
+$viewmodel->index() is nothing but index function of Share model class
+It does:
+public function index(){
+        $this->query("SELECT * FROM Shares");
+        $rows=$this->resultSet();
+        return $rows;
+    }
+
+
+It simply returns a row
+
+now this returnView function is written in base controller:
+
+protected function returnView($viewModel, $fullView){
+        $view = 'views/'.get_class($this).'/'.$this->action.'.php';
+        if($fullView){
+            require('views/main.php');
+        }
+        else{
+            require($view);
+        }
+    }
+
+
+get_class($this).. $this is object of class Shares so get_class($this)=Shares
+
+$this-> action is index
+
+so $view = 'views/Shares/index.php'
+
+fullView is true so we require main.php
+
+inside main.php we have require $view. So we require inside it 'views/Shares/index.php'
+

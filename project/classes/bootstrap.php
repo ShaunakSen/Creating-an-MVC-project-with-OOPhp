@@ -10,8 +10,8 @@ class Bootstrap
     {
         $this->request = $request;
         if ($this->request['controller'] == "") {
-            //this is root..request for home page
-            $this->controller = "home";
+            //this is root..request for Home page
+            $this->controller = "Home";
         } else {
             $this->controller = $this->request['controller'];
         }
