@@ -449,7 +449,8 @@ classes->Controllers.php
 
 <?php
 
-// this is gonna be abstract class. we dont need to initiate it. we are gonna have other controllers extend from it
+// this is gonna be abstract class. we dont need to initiate it. we are gonna have other controllers
+ extend from it
 
 abstract class Controller
 {
@@ -535,3 +536,83 @@ basically it does return $this->index()
 
 This index function is defined in Home Class
 
+
+Like we have created abstract class Controller.php we create abstract class Model.php
+
+We want to set up the constants for database parameters in config.php
+see config.php
+
+We create models Home,Share and User
+We create index function inside Home model. We are not getting anything out of database in Home
+class HomeModel{
+    public function index(){
+        return;
+    }
+}
+
+Now go to Home controller
+
+protected function index()
+    {
+        $viewmodel = new HomeModel;
+        $this->returnView($viewmodel->index(),true);
+    }
+
+Include stuff in index.php
+
+
+Now we construct other models like Home Model
+Share.php:
+class ShareModel{
+    public function index(){
+        return;
+    }
+}
+
+User.php:
+class UserModel{
+    public function index(){
+        return;
+    }
+}
+
+In shares controller:
+
+protected function index()
+    {
+        $viewmodel = new ShareModel;
+        $this->returnView($viewmodel->index(),true);
+    }
+
+
+In Users controller we dont need an index
+
+class Users extends Controller
+{
+
+}
+
+Now lets work on base model ie Model.php
+
+We complete PDO code here...
+see Model.php
+Basically we have bind, query, execute and resultSet functions
+
+Now we can make queries
+
+In Shares controller we have already instantiated the Share Model
+$viewmodel = new ShareModel;
+$this->returnView($viewmodel->index(),true);
+
+In Share  model extend from Model and we have index function defined
+In Share Model
+public function index(){
+        $this->query("SELECT * FROM shares");
+        $rows=$this->resultSet();
+        print_r($rows);
+    }
+
+So when Shares controller calls index function of Share model the data is printed
+But we are printing them i the model itself which is not good
+So we simply return the data so that the controller can call the view with the data
+instead of print_r($rows).. return $rows
