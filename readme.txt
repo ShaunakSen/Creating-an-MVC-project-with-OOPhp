@@ -1023,4 +1023,114 @@ in add function:
     }
 
 
+ Now to set our msgs
+
+ classes -> Messages.php
+
+class Messages
+{
+    public static function setMsg($text, $type)
+    {
+        // $type means error or success msg
+        if ($type == 'error') {
+            $_SESSION['errorMsg'] = $text;
+        } else {
+            $_SESSION['successMsg'] = $text;
+        }
+    }
+
+    public static function display()
+    {
+        if (isset($_SESSION['errorMsg'])) {
+            echo '<div class="alert alert-danger">' . $_SESSION['errorMsg'] . '</div>';
+            unset($_SESSION['errorMsg']);
+        }
+        if (isset($_SESSION['successMsg'])) {
+            echo '<div class="alert alert-success">' . $_SESSION['successMsg'] . '</div>';
+            unset($_SESSION['successMsg']);
+        }
+    }
+}
+
+Include this in index.php
+
+Now in model user in login function
+we were simply echoing incorrect login
+we want to show msg here
+
+
+Messages::setMsg('Incorrect Login','error');
+
+Since it is a public function no need to inherit
+Since it is a static function no need to instantiate
+
+So we have set Msg .. We need to display it
+
+In main.php
+
+
+<?php
+
+    Messages::display();
+    require($view);
+
+?>
+
+Now in register function in model we wanna validate stuff
+public function register()
+    {
+        //Sanitize POST
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $password = md5($post['password']);
+        if ($post['submit']) {
+            if ($post['name'] == '' || $post['email'] == '' || $post['password'] == '') {
+                Messages::setMsg('Please Fill in all Fields', 'error');
+                return;
+            }
+            //insert into db
+            $this->query('INSERT INTO users (name, email, password) VALUES (:name, :email, :password)');
+            $this->bind(':name', $post['name']);
+            $this->bind(':email', $post['email']);
+            $this->bind(':password', $password);
+            $this->execute();
+            //verify
+            if ($this->lastInsertId()) {
+                //Redirect
+                header('Location: ' . ROOT_URL . 'Users/login');
+            }
+        }
+        return;
+    }
+
+
+Same thing with shares ie in add function
+
+public function add()
+    {
+        //Sanitize POST
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        if ($post['submit']) {
+            if ($post['title'] == '' || $post['body'] == '' || $post['link'] == '') {
+                Messages::setMsg('Please Fill in all Fields', 'error');
+                return;
+            }
+            //insert into db
+            $this->query('INSERT INTO shares (title, body, link, user_id) VALUES (:title, :body, :link, :user_id)');
+            $this->bind(':title', $post['title']);
+            $this->bind(':body', $post['body']);
+            $this->bind(':link', $post['link']);
+            $this->bind(':user_id', 1);
+            $this->execute();
+            //verify
+            if($this->lastInsertId()){
+                //Redirect
+                header('Location: ' . ROOT_URL.'Shares');
+            }
+        }
+        return;
+    }
+
+    That's It !!!!!!!!!!!!!!!!!
+
+
 

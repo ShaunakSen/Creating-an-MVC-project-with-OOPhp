@@ -8,6 +8,10 @@ class UserModel extends Model
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $password = md5($post['password']);
         if ($post['submit']) {
+            if ($post['name'] == '' || $post['email'] == '' || $post['password'] == '') {
+                Messages::setMsg('Please Fill in all Fields', 'error');
+                return;
+            }
             //insert into db
             $this->query('INSERT INTO users (name, email, password) VALUES (:name, :email, :password)');
             $this->bind(':name', $post['name']);
@@ -38,12 +42,12 @@ class UserModel extends Model
                 $_SESSION['is_logged_in'] = true;
                 $_SESSION['user_data'] = array(
                     'id' => $row['id'],
-                    'name'=>$row['name'],
-                    'email'=>$row['email']
+                    'name' => $row['name'],
+                    'email' => $row['email']
                 );
-                header('Location: '.ROOT_URL.'Shares');
+                header('Location: ' . ROOT_URL . 'Shares');
             } else {
-                echo 'Incorrect Login';
+                Messages::setMsg('Incorrect Login', 'error');
             }
 
         }
