@@ -813,3 +813,148 @@ Next we build up add view
 
 So when we click on submit we get msg submit echoed out
 
+Change Share model add function now
+
+
+  public function add()
+    {
+        //Sanitize POST
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        if ($post['submit']) {
+            //insert into db
+            $this->query('INSERT INTO shares (title, body, link, user_id) VALUES (:title, :body, :link, :user_id)');
+            $this->bind(':title', $post['title']);
+            $this->bind(':body', $post['body']);
+            $this->bind(':link', $post['link']);
+            $this->bind(':user_id', 1);
+            $this->execute();
+            //verify
+            if($this->lastInsertId()){
+                //Redirect
+                header('Location: ' . ROOT_URL.'Shares');
+            }
+        }
+        return;
+    }
+
+
+We need to create this lastInsertId function in Base Model
+
+public function lastInsertId(){
+        return $this->dbh->lastInsertId();
+    }
+
+
+
+Next we want to implement feature that only when user is logged in they can post shares
+
+So we need to build up register
+So in Users controller we need to create this method
+
+protected function register(){
+        $viewmodel = new UserModel;
+        $this->returnView($viewmodel->register(), true);
+    }
+
+
+In User model:
+public function register(){
+        return;
+    }
+
+Let us build up the register view
+
+<div class="panel panel-default">
+    <div class="panel-heading">Register User</div>
+    <div class="panel-body">
+        <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
+            <div class="form-group">
+                <label for="">Name</label>
+                <input type="text" name="name" class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label for="">Email</label>
+                <input type="email" name="email" class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label for="">Password</label>
+                <input type="password" name="password" class="form-control"/>
+            </div>
+            <input type="submit" class="btn btn-primary" name="submit" value="Submit"/>
+
+        </form>
+    </div>
+</div>
+
+
+Now let us build up the register model
+
+public function register()
+    {
+        //Sanitize POST
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $password = md5($post['password']);
+        if ($post['submit']) {
+            //insert into db
+            $this->query('INSERT INTO users (name, email, password) VALUES (:name, :email, :password)');
+            $this->bind(':name', $post['name']);
+            $this->bind(':email', $post['email']);
+            $this->bind(':password', $password);
+            $this->execute();
+            //verify
+            if ($this->lastInsertId()) {
+                //Redirect
+                header('Location: ' . ROOT_URL . 'Users/login');
+            }
+        }
+        return;
+    }
+
+Let us create login now
+
+Go to users controller and create login method
+protected function login(){
+        $viewmodel = new UserModel;
+        $this->returnView($viewmodel->login(), true);
+    }
+
+Let us create login function in user model
+Note prev to query db we have used fetchAll ie we have called resultSet method in base Model class as:
+public function resultSet(){
+        $this->execute();
+        return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+Here for login we need a single row
+
+public function single(){
+        $this->execute();
+        return $this->stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+
+In User model:
+
+public function login(){
+        //Sanitize POST
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $password = md5($post['password']);
+        if ($post['submit']) {
+            // Compare Login
+            $this->query('SELECT * FROM users WHERE email = :email AND password = :password');
+            $this->bind(':email', $post['email']);
+            $this->bind(':password', $password);
+            $row = $this->single();
+            if($row){
+                echo 'Logged in';
+            }
+            else{
+                echo 'Incorrect Login';
+            }
+
+        }
+        return;
+    }
+
+
+
