@@ -674,7 +674,7 @@ public function index(){
     }
 
 
-It simply returns a row
+It simply returns a row set
 
 now this returnView function is written in base controller:
 
@@ -698,4 +698,49 @@ so $view = 'views/Shares/index.php'
 fullView is true so we require main.php
 
 inside main.php we have require $view. So we require inside it 'views/Shares/index.php'
+
+We kno that our basic home page will be in views->Home->index... We design that page
+
+Now we go to views->Shares->index
+
+<div>
+    <a href="<?php echo ROOT_URL;?>/Shares/add" class="btn btn-success btn-share">Share Something</a>
+    <?php foreach ($viewmodel as $item): ?>
+        <div class="well">
+            <h3>
+                <?php
+                echo $item['title'];
+                ?>
+            </h3>
+        </div>
+    <?php endforeach; ?>
+</div>
+
+
+Now where from does this viewmodel come?
+
+in Shares controller:
+ protected function index()
+    {
+        $viewmodel = new ShareModel;
+        $this->returnView($viewmodel->index(),true);
+    }
+
+    $viewmodel->index() is nothing but set of all rows returned from Share model index function
+
+    In Controller.php :
+    protected function returnView($viewModel, $fullView){
+            $viewmodel = $viewModel;
+            $view = 'views/'.get_class($this).'/'.$this->action.'.php';
+            if($fullView){
+                require('views/main.php');
+            }
+            else{
+                require($view);
+            }
+        }
+
+$viewModel is basically the set of rows
+It is being assigned to $viewmodel. So $viewmodel is the set of rows which is available for us to use
+in the view.
 

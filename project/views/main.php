@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Share Board</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="../assets/css/styles.css"/>
+    <link rel="stylesheet" href="../project/assets/css/styles.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
