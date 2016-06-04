@@ -23,7 +23,8 @@ class UserModel extends Model
         return;
     }
 
-    public function login(){
+    public function login()
+    {
         //Sanitize POST
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $password = md5($post['password']);
@@ -33,10 +34,15 @@ class UserModel extends Model
             $this->bind(':email', $post['email']);
             $this->bind(':password', $password);
             $row = $this->single();
-            if($row){
-                echo 'Logged in';
-            }
-            else{
+            if ($row) {
+                $_SESSION['is_logged_in'] = true;
+                $_SESSION['user_data'] = array(
+                    'id' => $row['id'],
+                    'name'=>$row['name'],
+                    'email'=>$row['email']
+                );
+                header('Location: '.ROOT_URL.'Shares');
+            } else {
                 echo 'Incorrect Login';
             }
 

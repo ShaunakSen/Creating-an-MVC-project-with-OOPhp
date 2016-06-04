@@ -1,6 +1,8 @@
 <div>
+    <?php if(isset($_SESSION['is_logged_in'])): ?>
     <a href="<?php echo ROOT_URL;?>/Shares/add" class="btn btn-success btn-share">Share Something</a>
     <br/><br/>
+    <?php endif; ?>
     <?php foreach ($viewmodel as $item): ?>
         <div class="panel panel-default">
             <div class="panel-heading">

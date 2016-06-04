@@ -13,7 +13,8 @@
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -29,11 +30,18 @@
                 <li><a href="<?php echo ROOT_URL ?>Shares">Shares</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="<?php echo ROOT_URL ?>/Users/login">Login</a></li>
-                <li><a href="<?php echo ROOT_URL ?>/Users/register">Register</a></li>
+                <?php if (isset($_SESSION['is_logged_in'])): ?>
+                    <li><a href="<?php echo ROOT_URL ?>">Welcome <?php echo $_SESSION['user_data']['name'] ?></a></li>
+                    <li><a href="<?php echo ROOT_URL ?>/Users/logout">Log Out</a></li>
+                <?php else: ?>
+                    <li><a href="<?php echo ROOT_URL ?>/Users/login">Login</a></li>
+                    <li><a href="<?php echo ROOT_URL ?>/Users/register">Register</a></li>
+                <?php endif; ?>
             </ul>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
 </nav>
 <div class="container">
     <div class="row">

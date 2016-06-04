@@ -957,4 +957,70 @@ public function login(){
     }
 
 
+Here we are simply echoing out the values.. but we wanna create sessions instead
+
+if ($row) {
+    $_SESSION['is_logged_in'] = true;
+    $_SESSION['user_data'] = array(
+        'id' => $row['id'],
+        'name'=>$row['name'],
+        'email'=>$row['email']
+    );
+header('Location: '.ROOT_URL.'Shares');
+}
+
+Also when we are logged in we dont want login and register links to show up on the nav bar
+
+in main.php
+
+<ul class="nav navbar-nav navbar-right">
+    <?php if (isset($_SESSION['is_logged_in'])): ?>
+        <li><a href="<?php echo ROOT_URL ?>">Welcome <?php echo $_SESSION['user_data']['name'] ?></a></li>
+        <li><a href="<?php echo ROOT_URL ?>/Users/logout">Log Out</a></li>
+    <?php else: ?>
+        <li><a href="<?php echo ROOT_URL ?>/Users/login">Login</a></li>
+        <li><a href="<?php echo ROOT_URL ?>/Users/register">Register</a></li>
+    <?php endif; ?>
+</ul>
+
+In index.php start up the session at very top
+
+
+Now create logout method in Users controller
+
+protected function logout(){
+        unset($_SESSION['is_logged_in']);
+        unset($_SESSION['user_data']);
+        session_destroy();
+        header("Location: " . ROOT_URL);
+    }
+
+
+Creating Access Control..
+ie basically we wanna make sure user can visit certain pages only when authenticated
+
+First we want that user if not logged in cant add a a share but can view all
+
+In Shares view index.php
+
+<?php if(isset($_SESSION['is_logged_in'])): ?>
+    <a href="<?php echo ROOT_URL;?>/Shares/add" class="btn btn-success btn-share">Share Something</a>
+    <br/><br/>
+<?php endif; ?>
+
+Also we dont want to display add share form
+
+Go to Shares controller
+in add function:
+
+ protected function add()
+    {
+        if(!isset($_SESSION['is_logged_in'])){
+            header('Location: '. ROOT_URL . 'Shares');
+        }
+        $viewmodel = new ShareModel;
+        $this->returnView($viewmodel->add(),true);
+    }
+
+
 
