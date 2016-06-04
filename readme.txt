@@ -744,3 +744,72 @@ $viewModel is basically the set of rows
 It is being assigned to $viewmodel. So $viewmodel is the set of rows which is available for us to use
 in the view.
 
+Now we display data in share index page
+
+<?php foreach ($viewmodel as $item): ?>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php echo $item['title'] ?></strong>
+                <br/>
+                <small><?php echo $item['create_date'] ?></small>
+            </div>
+            <div class="panel-body">
+                <?php echo $item['body'] ?>
+            </div>
+            <div class="panel-footer">
+                <a href="<?php echo $item['link'] ?>" class="btn btn-default" target="_blank">Visit Website</a>
+            </div>
+        </div>
+    <?php endforeach; ?>
+
+
+
+After this we want to build up Shares add page
+
+For this we need the add method in the controller
+
+protected function add()
+    {
+        $viewmodel = new ShareModel;
+        $this->returnView($viewmodel->add(),true);
+    }
+
+
+In Share Model:
+
+public function add(){
+        //Sanitize POST
+        $post =filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        if($post['submit']){
+            echo 'Submitted';
+        }
+    }
+
+
+Next we build up add view
+
+<div class="panel panel-default">
+    <div class="panel-heading">Share your thoughts</div>
+    <div class="panel-body">
+        <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
+            <div class="form-group">
+                <label for="">Share Title</label>
+                <input type="text" name="title" class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label for="">Share Body</label>
+                <textarea name="body" id="" rows="3" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="">Share Link</label>
+                <input type="text" name="link" class="form-control"/>
+            </div>
+            <input type="submit" class="btn btn-primary" name="submit" value="Submit"/>
+            <a href="<?php echo ROOT_URL ?>/Shares" class="btn btn-danger">Cancel</a>
+        </form>
+    </div>
+</div>
+
+
+So when we click on submit we get msg submit echoed out
+
